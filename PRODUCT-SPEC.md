@@ -1,8 +1,9 @@
-# AAH Cloud: Agent Artifact Storage & Viewer
+# Artyfacts: Agent Artifact Storage & Viewer
 
 **Version:** 0.1.0-draft  
 **Status:** Product Concept  
-**Date:** 2026-02-11
+**Date:** 2026-02-12  
+**Company:** Artygroup
 
 ---
 
@@ -20,7 +21,7 @@ AI agents produce artifacts constantly: research documents, code, analysis, spec
 
 ---
 
-## Solution: AAH Cloud
+## Solution: Artyfacts
 
 A hosted service for storing, viewing, and managing agent artifacts.
 
@@ -39,7 +40,7 @@ A hosted service for storing, viewing, and managing agent artifacts.
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                         AAH Cloud                                │
+│                         Artyfacts                                │
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                  │
 │   ┌──────────────┐    ┌──────────────┐    ┌──────────────┐     │
@@ -91,8 +92,8 @@ POST   /v1/artifacts/:id/export   # Export to GitHub/Notion/etc.
 **Upload flow:**
 
 ```bash
-curl -X POST https://api.aah.cloud/v1/artifacts \
-  -H "Authorization: Bearer $AAH_TOKEN" \
+curl -X POST https://api.artyfacts.dev/v1/artifacts \
+  -H "Authorization: Bearer $ARTYFACTS_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
     "aah_version": "0.1",
@@ -122,8 +123,8 @@ curl -X POST https://api.aah.cloud/v1/artifacts \
 ```json
 {
   "id": "aah_7f3b2a1c",
-  "url": "https://aah.cloud/a/7f3b2a1c",
-  "embed_url": "https://aah.cloud/embed/7f3b2a1c",
+  "url": "https://artyfacts.dev/a/7f3b2a1c",
+  "embed_url": "https://artyfacts.dev/embed/7f3b2a1c",
   "created_at": "2026-02-11T23:10:30Z",
   "expires_at": "2026-03-13T23:10:30Z"
 }
@@ -287,9 +288,9 @@ Web application for browsing and viewing artifacts.
 ### 4. Sharing & Embeds
 
 **Shareable links:**
-- `https://aah.cloud/a/7f3b2a1c` — Full viewer
-- `https://aah.cloud/a/7f3b2a1c?token=xyz` — Time-limited public link
-- `https://aah.cloud/embed/7f3b2a1c` — Embeddable iframe
+- `https://artyfacts.dev/a/7f3b2a1c` — Full viewer
+- `https://artyfacts.dev/a/7f3b2a1c?token=xyz` — Time-limited public link
+- `https://artyfacts.dev/embed/7f3b2a1c` — Embeddable iframe
 
 **Slack unfurling:**
 
@@ -314,12 +315,12 @@ Native integrations for agent frameworks.
 **JavaScript/TypeScript:**
 
 ```typescript
-import { AAHClient } from '@aah/sdk';
+import { AAHClient } from '@artyfacts/sdk';
 
-const aah = new AAHClient({ apiKey: process.env.AAH_API_KEY });
+const aah = new AAHClient({ apiKey: process.env.ARTYFACTS_API_KEY });
 
 // Upload artifact
-const artifact = await aah.upload({
+const artifact = await artyfacts.upload({
   type: 'document/markdown',
   title: 'Competitor Analysis',
   content: markdownString,
@@ -333,17 +334,17 @@ const artifact = await aah.upload({
 });
 
 console.log(`Artifact URL: ${artifact.url}`);
-// https://aah.cloud/a/7f3b2a1c
+// https://artyfacts.dev/a/7f3b2a1c
 ```
 
 **Python:**
 
 ```python
-from aah import AAHClient
+from artyfacts import AAHClient
 
-aah = AAHClient(api_key=os.environ['AAH_API_KEY'])
+aah = AAHClient(api_key=os.environ['ARTYFACTS_API_KEY'])
 
-artifact = aah.upload(
+artifact = artyfacts.upload(
     type='document/markdown',
     title='Competitor Analysis',
     content=markdown_string,
@@ -360,16 +361,16 @@ print(f"Artifact URL: {artifact.url}")
 
 ```bash
 # Upload from stdin
-cat analysis.md | aah upload --type document/markdown --title "Analysis"
+cat analysis.md | artyfacts upload --type document/markdown --title "Analysis"
 
 # Upload file
-aah upload ./report.md --task-id ART-456
+artyfacts upload ./report.md --task-id ART-456
 
 # List recent artifacts
-aah list --limit 10
+artyfacts list --limit 10
 
 # Open artifact in browser
-aah open aah_7f3b2a1c
+artyfacts open aah_7f3b2a1c
 ```
 
 ---
@@ -380,9 +381,9 @@ aah open aah_7f3b2a1c
 
 ```
 1. Agent completes research task
-2. Agent calls AAH SDK: aah.upload(content, metadata)
+2. Agent calls AAH SDK: artyfacts.upload(content, metadata)
 3. AAH stores artifact, returns URL
-4. Agent includes URL in its output: "Research complete: https://aah.cloud/a/abc123"
+4. Agent includes URL in its output: "Research complete: https://artyfacts.dev/a/abc123"
 5. Human clicks link → sees beautifully rendered artifact
 ```
 
@@ -461,13 +462,13 @@ aah open aah_7f3b2a1c
 
 ---
 
-## Open Questions
+## Decisions
 
-1. **Namespace**: `aah.cloud`? `artifacts.dev`? `agentartifacts.io`?
-2. **Self-hosted option**: Should we offer an OSS self-hosted version?
-3. **Content limits**: Max artifact size? (Suggest: 10MB for Pro, 100MB for Enterprise)
-4. **Deduplication**: Hash-based dedup for identical content?
-5. **Versioning**: Track versions of the same artifact, or treat as separate artifacts?
+1. ✅ **Namespace**: `artyfacts.dev`
+2. ⏸️ **Self-hosted option**: Backburner — focus on cloud first
+3. ✅ **Content limits**: 10MB for Pro, 100MB for Enterprise
+4. ✅ **Deduplication**: Hash-based dedup via SHA-256
+5. ✅ **Versioning**: Track versions of the same artifact (see DATA-MODEL.md)
 
 ---
 
@@ -481,7 +482,7 @@ aah open aah_7f3b2a1c
 | LangSmith | LLM tracing | Traces, not artifacts; eval-focused |
 | Arize | ML observability | Model metrics, not agent output |
 
-**AAH Cloud positioning**: "The missing artifact layer for AI agents."
+**Artyfacts positioning**: *"Agent artifacts that you can actually read."*
 
 ---
 

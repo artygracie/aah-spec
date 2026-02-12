@@ -3,7 +3,8 @@
 **Version:** 0.1.0-draft  
 **Status:** Proposal  
 **Authors:** Gracie Redfern, Crouton  
-**Date:** 2026-02-11
+**Date:** 2026-02-11  
+**Reference Implementation:** [Artyfacts](https://artyfacts.dev) by Artygroup
 
 ---
 
@@ -73,6 +74,9 @@ Core artifact identification.
 | `type` | string | Yes | Artifact type (see Section 3) |
 | `title` | string | No | Human-readable title |
 | `summary` | string | No | Brief description (max 500 chars) |
+| `version` | integer | No | Version number (1-indexed, default 1) |
+| `version_id` | string | No | Unique ID for this specific version |
+| `previous_version_id` | string | No | ID of the previous version (for version chains) |
 | `created_at` | ISO 8601 | Yes | Creation timestamp |
 | `updated_at` | ISO 8601 | No | Last modification timestamp |
 
@@ -82,6 +86,7 @@ Core artifact identification.
   "type": "document/markdown",
   "title": "Competitor Analysis: Table Management Software",
   "summary": "Analysis of 5 major competitors in the restaurant table management space",
+  "version": 1,
   "created_at": "2026-02-11T23:10:28Z"
 }
 ```
@@ -127,7 +132,7 @@ The actual artifact content.
 | `encoding` | string | No | Character encoding (default: utf-8) |
 | `body` | string | Conditional | Inline content (for small artifacts) |
 | `body_url` | string | Conditional | URL to fetch content (for large artifacts) |
-| `body_hash` | string | No | SHA-256 hash of content for integrity |
+| `body_hash` | string | No | SHA-256 hash of content (used for integrity + deduplication) |
 | `size_bytes` | integer | No | Content size in bytes |
 | `token_count` | integer | No | Estimated token count (for LLM context budgeting) |
 
@@ -440,12 +445,16 @@ To assist UI rendering, artifacts MAY include rendering hints in extensions:
 
 The following are under consideration for future versions:
 
-- **Versioning**: Track artifact versions and diffs
 - **Signing**: Cryptographic signatures for artifact authenticity
 - **Streaming**: Support for streaming large artifacts
 - **Relationships**: Richer artifact relationship types (derives-from, supersedes, relates-to)
 - **Schemas registry**: Central registry for structured artifact schemas
 - **Reactions/Comments**: Human feedback on artifacts
+
+### Implemented in v0.1
+
+- **Versioning**: Track artifact versions via `version`, `version_id`, `previous_version_id` fields
+- **Deduplication**: Storage systems SHOULD deduplicate content based on `body_hash`
 
 ---
 
@@ -461,9 +470,10 @@ https://aah-spec.org/schemas/v0.1/artifact.json
 
 ## Appendix B: Reference Implementations
 
+- **Artyfacts**: Cloud storage + viewer ([artyfacts.dev](https://artyfacts.dev))
 - **Clawdbot**: Native AAH support (planned)
-- **aah-js**: JavaScript/TypeScript SDK (planned)
-- **aah-python**: Python SDK (planned)
+- **@artyfacts/sdk**: JavaScript/TypeScript SDK (planned)
+- **artyfacts-python**: Python SDK (planned)
 
 ---
 
