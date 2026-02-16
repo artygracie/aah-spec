@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aah.artygroup.co/schemas/decision-response@1.0.json",
+  "title": "AAH Decision Response",
+  "description": "Schema for human-in-the-loop decision response artifacts",
+  "type": "object",
+  "required": ["schema", "data"],
+  "properties": {
+    "schema": {
+      "const": "aah:decision/response@1.0"
+    },
+    "data": {
+      "type": "object",
+      "required": ["request_id", "responses", "overall_status"],
+      "properties": {
+        "request_id": {
+          "type": "string",
+          "description": "ID of the decision request being responded to"
+        },
+        "responses": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/decisionAnswer"
+          }
+        },
+        "overall_status": {
+          "type": "string",
+          "enum": ["all_approved", "partial", "all_rejected", "pending"],
+          "description": "Aggregated status of all decisions"
+        },
+        "summary": {
+          "type": "string",
+          "description": "Human-readable summary of decisions made"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "decisionAnswer": {
+      "type": "object",
+      "required": ["decision_id"],
+      "properties": {
+        "decision_id": {
+          "type": "string",
+          "description": "Matches decision.id in the request"
+        },
+        "approved": {
+          "type": "boolean",
+          "description": "For approval-type decisions"
+        },
+        "selected": {
+          "oneOf": [
+            { "type": "string" },
+            { "type": "array", "items": { "type": "string" } }
+          ],
+          "description": "For choice/multi_choice decisions"
+        },
+        "value": {
+          "oneOf": [
+            { "type": "string" },
+            { "type": "number" }
+          ],
+          "description": "For text/number decisions"
+        },
+        "comment": {
+          "type": "string",
+          "description": "Optional rationale or feedback"
+        },
+        "decided_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When this decision was made"
+        }
+      }
+    }
+  }
+}
